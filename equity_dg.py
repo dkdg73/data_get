@@ -111,12 +111,23 @@ nonBBG_df = nonBBG_df.resample('D').asfreq().fillna(method='ffill', limit=35)
 nonBBG_df = nonBBG_df.resample('B').asfreq()
 
 
-# combine nonBBG df with cleanBBG_df
-eq_df = cleanBBG_df.combine_first(nonBBG_df)
+# combine nonBBG df with cleanBBG_df by creating a dictionary of spliced series to concatenate
+datatype_list=['tri','pi','eps','dps']
+datatype_dict={}
 
-##################################################################
-### THIS COMPLETES THE LOADING AND SPLICING OF HISTORICAL DATA ###
-##################################################################
+for dt in datatype_list:
+    datatype_dict[dt]=funcs.splice_df(nonBBG_df[dt], cleanBBG_df[dt])
+
+#concatenate the series
+eq_df=pd.concat(
+    [datatype_dict['tri'],datatype_dict['pi'], datatype_dict['eps'],datatype_dict['dps']],
+    axis=1, keys=datatype_list, names=['datatype', 'gen_index']
+    )
+
+#################################################################################
+### THIS COMPLETES THE LOADING AND SPLICING OF HISTORICAL & CONTEMPORARY DATA ###
+#################################################################################
 
 # pickle the dataframe
 eq_df.to_pickle('C:/Code/asset_allocation/eq_pickles.pkl')
+

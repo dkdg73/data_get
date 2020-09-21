@@ -3,7 +3,7 @@
 # historical data from various sources for history
 # splices series together where possible to give the longest run of data possible
 
-import funcs
+import dgfuncs
 
 import numpy as np
 import pandas as pd
@@ -66,7 +66,7 @@ dCCR_df = pd.concat([dCCR_df], keys=['tri'], names=['datatype'], axis=1)
 CCR_df = dCCR_df.cumprod()
 
 #splice longer CCR tris with shorter BBG tris
-new_df = funcs.splice_df(CCR_df['tri'],BBGeq_df['tri'])
+new_df = dgfuncs.splice_df(CCR_df['tri'],BBGeq_df['tri'])
 CCR_df = pd.concat([new_df], keys=['tri'], names=['datatype'], axis=1)
  
 
@@ -115,7 +115,7 @@ datatype_list=['tri','pi','eps','dps']
 datatype_dict={}
 
 for dt in datatype_list:
-    datatype_dict[dt]=funcs.splice_df(nonBBGeq_df[dt], cleanBBGeq_df[dt])
+    datatype_dict[dt]=dgfuncs.splice_df(nonBBGeq_df[dt], cleanBBGeq_df[dt])
 
 #concatenate the series
 eq_df=pd.concat(
@@ -128,5 +128,5 @@ eq_df=pd.concat(
 #################################################################################
 
 # pickle the dataframe
-eq_df.to_pickle('C:/Code/asset_allocation/eq_pickles.pkl')
+eq_df.to_pickle('C:/Code/asset_allocation/pickles/eq_pickles.pkl')
 

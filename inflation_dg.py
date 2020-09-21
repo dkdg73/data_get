@@ -1,6 +1,6 @@
 # imports macro data from BBG
 
-import funcs
+import dgfuncs
 
 import numpy as np
 import pandas as pd
@@ -32,4 +32,4 @@ BBGinf_df = BBGinf_df.resample('d').asfreq().fillna(method='ffill',limit = 40)
 # resample to business daily frequency
 BBGinf_df = BBGinf_df.resample('d').asfreq().fillna(method='ffill',limit = 40)
 
-BBGinf_df.to_pickle('C:/Code/asset_allocation/inflation_pickles.pkl')
+BBGinf_df.to_pickle('C:/Code/asset_allocation/pickles/inflation_pickles.pkl')

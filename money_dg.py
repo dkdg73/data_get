@@ -3,7 +3,7 @@
 # historical data from various sources for history
 # splices series together where possible to give the longest run of data possible
 
-import funcs
+import dgfuncs
 
 import numpy as np
 import pandas as pd
@@ -46,8 +46,8 @@ BBGmoney_df = pd.concat(
 idx = [(item[0], money_label_dict[item[0]][item[1]]) for item in BBGmoney_df.columns]
 BBGmoney_df.columns = pd.MultiIndex.from_tuples(idx, names=names)
 
-BBGmoney_df.to_pickle('C:/Code/asset_allocation/money_pickles.pkl')
+BBGmoney_df.to_pickle('C:/Code/asset_allocation/pickles/money_pickles.pkl')
 
 # NB currency return for a usd investor is [(1/usd)/pct_chg() + r*]
 
-#newdf = funcs.get_fxtri(BBGmoney_df['USDCHF'], BBGmoney_df['3m_bills']['CHmoney3m'])
+#newdf = dgfuncs.get_fxtri(BBGmoney_df['USDCHF'], BBGmoney_df['3m_bills']['CHmoney3m'])

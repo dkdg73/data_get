@@ -12,13 +12,6 @@ def get_start_dates(df):
         lsta[ind] = df[ind].first_valid_index().date().isoformat()
     return lsta
 
-# returns list with datatype, series, startdate for each variable
-# takes hierarchical df as input
-def get_start_dates_2(df):
-    for key in df.keys():
-        lsta = [[key, ind, df[key][ind].first_valid_index().date().isoformat()] for key, ind in df]
-    return lsta
-
 # returns a dictionary of indices and their corresponding cagrs 
 # takes a single layer df as input 
 def get_cagrs(df):
@@ -70,8 +63,14 @@ def splice_s(x, y):
 # into the longest possible series
 # the dfs inputed must be single layered
 def splice_df(x, y):
-    #merge the two dfs on the datetime index
-    merged_df = pd.merge(x, y, left_index=True, right_index=True)
+    # first identify which series is the longest, so as to correctly merge on its index
+    if x.index.nunique() > y.index.nunique():
+        toggle = 'left'
+    else:
+        toggle = 'right'
+    
+    # merge the two dfs on the datetime index
+    merged_df = pd.merge(x, y, how=toggle, left_index=True, right_index=True)
     # create a list of the names of market indices to be spliced
     mkts = [mkt.replace('_x','') for mkt in [col for col in merged_df if '_x' in col]]
     # add the spliced market indices to the merged df
@@ -82,6 +81,15 @@ def splice_df(x, y):
     merged_df = merged_df[[col for col in merged_df.columns if not'_x' in col]]
 
     return merged_df
+
+# returns the currency return for a USD investor buying FX and leaving on deposit unhedged
+# takes USD based FX pair and the FX 3m rate as pandas df or series
+def get_fxtri(x, y):
+    daily_currency_return = x.offset(1)/x
+    daily_interest_income = y.div(100).add(1).pow(1/90).sub(1)
+    daily_return = daily_currency_return.add(daily_interest_income)
+    return daily_return.cumprod()
+
 
 
     

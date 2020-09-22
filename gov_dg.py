@@ -10,6 +10,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import xlrd
 
+import dgfuncs as funcs
+
 datapath1 = r'C:/data/BBG_data/'
 datapath2 = r'C:/data/nonBBG_data/'
 
@@ -41,4 +43,53 @@ BBGbond_df = pd.concat(
 idx = [(item[0], bond_label_dict[item[0]][item[1]]) for item in BBGbond_df.columns]
 BBGbond_df.columns = pd.MultiIndex.from_tuples(idx, names=['datatype', 'gen_index'])
 
-BBGbond_df.to_pickle('C:/Code/asset_allocation/pickles/bond_pickles.pkl')
+###########################################################
+### THIS COMPLETES THE CODE FOR THE LOADING OF BBG DATA ###
+###########################################################
+
+#load nonBBG data
+nonBBG_bonddata = pd.read_excel(
+    'C:/Data/nonBBG_Data/historic_financial/bond_data_NBBG.xlsx',
+    ['tri', 'yld'],
+    index_col=0,
+    parse_dates=True
+    )
+
+# concatenate the pandas excel dictionary of worksheet dfs to a single df
+nonBBGbond_df = pd.concat(
+    [nonBBG_bonddata['tri'],nonBBG_bonddata['yld']],
+    keys=['tri','yld'],names=['datatype','gen_index'], axis=1)
+
+# set date range to the end of the month (couldn't figure out how to default to end month)
+nonBBGbond_df.index = pd.date_range(
+    start='1871-01',periods=nonBBGbond_df['tri']['USbonds7-10y'].count(),freq='M'
+    )
+
+# non_BBG data is lapsed and doesn't update 
+# roll forward the date index to bring it uptodate, and ensure merge compatibility 
+dates = pd.date_range(start='2013-03', end='2020-10',freq='M')
+nonBBGbond_df=nonBBGbond_df.append(pd.DataFrame(index=dates))
+
+
+# resample the data to daily data, filling forward the NaNs
+# resample again to business daily data 
+# !! resampling biz daily from the start leads to missing data because !!
+# !! the monthly data is end calendar month, which is not necessarily a business day!!
+nonBBGbond_df = nonBBGbond_df.resample('D').asfreq().fillna(method='ffill', limit=35)
+nonBBGbond_df = nonBBGbond_df.resample('B').asfreq()
+
+
+# combine nonBBG df with cleanBBGeq_df by creating a dictionary of spliced series to concatenate
+datatype_list=['tri','yld']
+datatype_dict={}
+
+for dt in datatype_list:
+    datatype_dict[dt]=funcs.splice_df(nonBBGbond_df[dt], BBGbond_df[dt])
+
+#concatenate the series
+bond_df=pd.concat(
+    [datatype_dict['tri'],datatype_dict['yld']],
+    axis=1, keys=datatype_list, names=['datatype', 'gen_index']
+    )
+
+bond_df.to_pickle('C:/Code/asset_allocation/pickles/bond_pickles.pkl')

@@ -23,7 +23,7 @@ BBGinf_df = pd.read_excel(
 
 BBGinf_df.columns = [inflation_label_dict[col] for col in BBGinf_df.columns]
 
-#create US 
+#create US inflation series
 BBGinf_df['USinf']=BBGinf_df['UScpi'].pct_change(12)
 
 # resample to daily frequency

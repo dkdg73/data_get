@@ -3,7 +3,7 @@
 # historical data from various sources for history
 # splices series together where possible to give the longest run of data possible
 
-import dgfuncs
+#import dgfuncs
 
 import numpy as np
 import pandas as pd

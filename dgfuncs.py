@@ -63,7 +63,7 @@ def splice_s(x, y):
 # into the longest possible series
 # the dfs inputed must be single layered
 def splice_df(x, y):
-    # first identify which series is the longest, so as to correctly merge on its index
+    # first identify which df is the longest, so as to correctly merge on its index
     if x.index.nunique() > y.index.nunique():
         toggle = 'left'
     else:

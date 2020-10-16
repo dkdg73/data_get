@@ -3,12 +3,13 @@
 # historical data from various sources for history
 # splices series together where possible to give the longest run of data possible
 
-import dgfuncs as funcs
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import xlrd
+
+import dgfuncs as funcs
 
 datapath1 = r'C:/data/BBG_data/'
 datapath2 = r'C:/data/nonBBG_data/'

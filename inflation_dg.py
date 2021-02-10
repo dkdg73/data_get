@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import xlrd
 
-import dgfuncs as funcs
+#import dgfuncs as funcs
 
 
 datapath1 = r'C:/data/BBG_data/'

@@ -10,9 +10,6 @@ import matplotlib.pyplot as plt
 import datetime
 import xlrd
 
-import dgfuncs as funcs
-from functions import chart_funcs as chartfuncs
-
 datapath1 = r'C:/data/BBG_data/'
 datapath2 = r'C:/data/nonBBG_data/'
 

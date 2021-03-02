@@ -12,12 +12,28 @@ gfd_bond_tri_dict = {
 
 gfd_commods_dict = {
     'GFDCONATGAS':'natgas', 
-    'CMTOBACM', 'tobac'
+    'CMTOBACM': 'tobac'
 }
 
 gfd_eq_tri_dict = {
-    'GFTRJPNSTD':'Topix';
-    'GFUK100MRM':'UKX';
-    'GFTSWLDM';'WORLD';
-    'GFUS100MRD';'SPX'
+    'GFTRJPNSTD':'Topix',
+    'GFUK100MRM':'UKX',
+    'GFTSWLDM':'WORLD',
+    'GFUS100MRD':'SPX'
+}
+
+gfd_pct_GDP = {
+    'SCWLDITMCAPPCTM':"WDtechpcGDP",
+    'SCUSALLITMCAPPCTM':'UStechpcGDP',
+    'SCUSALLITMCAPPCTM':"USmatspcGDP"
+}
+
+gfd_mktcap = {
+    '_5SP10MCAP':'SPXmtkcap_energy',
+    '_5SP45MCAP':'SPXmktcap_tech',
+    '_5P5TOTMCAPM':'SPXmktcap'
+}
+
+gfd_mktcap_pc = {
+    'SCUSALLITMCAPPCTM':'SPXmktcappc_tech'
 }

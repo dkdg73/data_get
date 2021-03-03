@@ -7,6 +7,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import datetime as dt
 import xlrd
 
 from functions import dgfuncs as funcs
@@ -57,8 +58,8 @@ BBGeq_df['eps']=BBGeq_df['eps'].fillna(method='ffill', limit = 30)
 BBGeq_df['dps']=BBGeq_df['dps'].fillna(method='ffill', limit = 30)
 
 # recalculate tri's where price and dividend data allow
-# tri_calc takes daily price and monthly div data paddded to daily frequency 
-# hence divide div by 20.7to calculate daily div return 
+# tri_calc takes daily price and monthly div data padded to daily frequency 
+# hence divide div by 20.7 to calculate daily div return 
 tri_calc = lambda x, y: (x + y/20.7)/x.shift(1)
 dCCR_df = BBGeq_df['pi'].combine(BBGeq_df['dps'], tri_calc)
 
@@ -97,18 +98,16 @@ nonBBGeq_df.index = pd.date_range(
     start='1871-01',periods=nonBBGeq_df['tri']['spx'].count(),freq='M'
     )
 
+# resample the nonBBG df to business days, filling forward the NaNs
+nonBBGeq_df = nonBBGeq_df.resample('B').last().fillna(method='ffill', limit=35)
+
 # non_BBG data is lapsed and doesn't update 
 # roll forward the date index to bring it uptodate, and ensure merge compatibility 
-dates = pd.date_range(start='2019-10', periods=12,freq='M')
+last_nonBBG_data_point = nonBBGeq_df.index[-1].date().isoformat()
+last_BBG_data_point = BBGeq_df.index[-1].date().isoformat()
+
+dates = pd.date_range(start=last_nonBBG_data_point, end = last_BBG_data_point, freq='B')
 nonBBGeq_df=nonBBGeq_df.append(pd.DataFrame(index=dates))
-
-
-# resample the data to daily data, filling forward the NaNs
-# resample again to business daily data 
-# !! resampling biz daily from the start leads to missing data because !!
-# !! the monthly data is end calendar month, which is not necessarily a business day!!
-nonBBGeq_df = nonBBGeq_df.resample('D').asfreq().fillna(method='ffill', limit=35)
-nonBBGeq_df = nonBBGeq_df.resample('B').asfreq()
 
 
 # combine nonBBG df with cleanBBGeq_df by creating a dictionary of spliced series to concatenate
@@ -129,4 +128,4 @@ eq_df=pd.concat(
 #################################################################################
 
 # pickle the dataframe
-eq_df.to_pickle('C:/Code/asset_allocation/pickles/eq_pickles.pkl')
+eq_df.to_pickle('C:/Data/pickles/eq_pickles.pkl')

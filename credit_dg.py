@@ -207,4 +207,4 @@ nonBBGcred_df.columns = pd.MultiIndex.from_tuples(idx, names=['datatype', 'gen_i
 cred_df = pd.concat([nonBBGcred_df, BBGcred_df], axis=1)
 
 # pickle the dataframe
-cred_df.to_pickle('C:/Code/asset_allocation/pickles/cred_pickles.pkl')
+cred_df.to_pickle('C:/Data/pickles/cred_pickles.pkl')

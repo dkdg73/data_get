@@ -65,31 +65,29 @@ nonBBGbond_df.index = pd.date_range(
     start='1871-01',periods=nonBBGbond_df['tri']['USbonds7-10y'].count(),freq='M'
     )
 
+# resample the data to busines daily data, filling forward the NaNs
+nonBBGbond_df = nonBBGbond_df.resample('B').last().fillna(method='ffill', limit=35)
+
 # non_BBG data is lapsed and doesn't update 
-# roll forward the date index to bring it uptodate, and ensure merge compatibility 
-dates = pd.date_range(start='2013-03', end='2020-10',freq='M')
+# roll forward the date index to bring it uptodate, and ensure merge compatibility
+last_nonBBG_datapoint = nonBBGbond_df.index[-1].date().isoformat()
+last_BBG_datapoint = BBGbond_df.index[-1].date().isoformat()
+
+dates = pd.date_range(start=last_nonBBG_datapoint, end=last_BBG_datapoint,freq='B')
 nonBBGbond_df=nonBBGbond_df.append(pd.DataFrame(index=dates))
 
 
-# resample the data to daily data, filling forward the NaNs
-# resample again to business daily data 
-# !! resampling biz daily from the start leads to missing data because !!
-# !! the monthly data is end calendar month, which is not necessarily a business day!!
-nonBBGbond_df = nonBBGbond_df.resample('D').asfreq().fillna(method='ffill', limit=35)
-nonBBGbond_df = nonBBGbond_df.resample('B').asfreq()
-
-
-# combine nonBBG df with cleanBBGeq_df by creating a dictionary of spliced series to concatenate
+# combine nonBBG df with BBG df by creating a dictionary of spliced series to concatenate
 datatype_list=['tri','yld']
 datatype_dict={}
 
 for dt in datatype_list:
     datatype_dict[dt]=funcs.splice_df(nonBBGbond_df[dt], BBGbond_df[dt])
 
-#concatenate the series
+#concatenate the dictionary values into a single df
 bond_df=pd.concat(
     [datatype_dict['tri'],datatype_dict['yld']],
     axis=1, keys=datatype_list, names=['datatype', 'gen_index']
     )
 
-bond_df.to_pickle('C:/Code/asset_allocation/pickles/bond_pickles.pkl')
+bond_df.to_pickle('C:/Data/pickles/bond_pickles.pkl')

@@ -52,6 +52,7 @@ idx = [
     ]
 BBGcred_df.columns = pd.MultiIndex.from_tuples(idx, names=['datatype', 'gen_index'])
 BBGcred_df.index.name = 'Date'
+BBGcred_df = BBGcred_df.resample('B').asfreq()
 
 ###########################################################
 ### THIS COMPLETES THE CODE FOR THE LOADING OF BBG DATA ###
@@ -69,13 +70,13 @@ BBGcred_df.index.name = 'Date'
 # -- but also doesn't include holidays in its date index
 # -- this needs to be cleaned before splicing or merging with other datasets
 # the following code does the following 
-# -- cleans up historical data in each worksheet in the historic data xlsx to prepare it for merging and splicing
+# -- cleans up historical data in each worksheet (ie GFD data and the FRED) in the historic data xlsx to prepare it for merging and splicing
 # -- merges each sheet's data into one dataframe for historic data
 # -- cleans up the BAML-ICE data (ie its erroneously formatted dates)
 # -- the resulting BAML-ICE ylds dataframe is then spliced with the historic ylds dataframe to yield a longer run of yld data
 # merges this non-BBG df with the BBG df, and pickles it
 
-# load historic credit data 
+# load historic credit data
 # NB/ the historic data is from GFD and FRED
 HIST_creddata=pd.read_excel(
     f'{datapath2}historic_financial/credit_NBBG.xlsx',
@@ -87,7 +88,7 @@ HIST_creddata=pd.read_excel(
 # start with the 'tri' sheet
 # reindex to the earliest starting point
 # create an empty df with the desired date index
-dates = pd.date_range(start='1871-02', end='2020-10',freq='M')
+dates = pd.date_range(start='1871-02', end='2020-10',freq='M') #start with Feb as xlsx sheet only has 11 entries for 1871
 df = pd.DataFrame(index=dates)
 df.index.name = 'Date'
 
@@ -99,8 +100,7 @@ HIST_creddata['tri'].index.name = 'Date'
 HIST_creddata['tri'] = pd.merge(df, HIST_creddata['tri'], how='left', on='Date')
 
 # resample historic tri data into daily business frequency
-HIST_creddata['tri'] = HIST_creddata['tri'].resample('D').asfreq().fillna(method='ffill', limit=35)
-HIST_creddata['tri'] = HIST_creddata['tri'].resample('B').asfreq()
+HIST_creddata['tri'] = HIST_creddata['tri'].resample('B').last().fillna(method='ffill', limit=35)
 
 # Load ICE yield data for C6C0
 # NB1 at time of coding, the the ICE xlsx was one worksheet and one dataseries so it 
@@ -119,7 +119,8 @@ HIST_creddata['tri'] = HIST_creddata['tri'].resample('B').asfreq()
 # the uses that Boolean to run another list comprehension to correct the date formatting error
 # list comprehensions aren't the idea way to fix this but I couldn't figure out how to do it vectorized
 
-# load the ICE data
+# load the ICE data C6C0 yld data
+# NB we're not setting the index_col = 0 because we don't want the faulty ICE dates
 ICE_creddf=pd.read_excel(
     f'{datapath2}ICE_BAML/ice_credit.xlsx',
     parse_dates=False
@@ -153,26 +154,26 @@ ICE_creddf = ICE_creddf.set_index(ICE_creddf['new_Date'])
 ICE_creddf = ICE_creddf.drop(columns=['Date','date_type','new_Date'])
 ICE_creddf.index.name = 'Date'
 
-# splice C6C0 with the Moody's BAA series
+# splice C6C0 with the Moody's BAA yld series
+# C6C0 is the BAML-ICE 5-10yr A-BBB 
 # NB1/that the Moody's data is averaged monthly
-# NB2/that the Moody's AAA and BAA series are 20y+ maturity vs BAML-ICE 5-10yr
+# NB2/that the Moody's AAA and BAA yld series are 20y+ maturity vs BAML-ICE 5-10yr
 # ==> we are going to splice Moody's BAA yield with ICEBAML
  
 # convert the FRED yld data's index to a month-end index, so the yld df can merge with the tri df
 HIST_creddata['yld'].index = HIST_creddata['yld'].index.to_period('M').to_timestamp('M')
 
 # convert the FRED yld data to business day frequency 
-HIST_creddata['yld'] = HIST_creddata['yld'].resample('D').asfreq().fillna(method='bfill', limit=35)
-HIST_creddata['yld'] = HIST_creddata['yld'].resample('B').asfreq()
+HIST_creddata['yld'] = HIST_creddata['yld'].resample('B').last().fillna(method='bfill', limit=35)
 
 # merge the yield data from FRED data with the yld data from ICE 
 mrgd_yld_data = pd.merge(HIST_creddata['yld'], ICE_creddf, how='left', left_on='Date', right_on='Date')
 mrgd_yld_data.ffill(inplace=True)
 
-# create an adjusted C6C0 series based on the BAA series
+# create an adjusted C6C0 series based on the BAA series, reduced by 50bps to adust for the longer duration of the BAA
 mrgd_yld_data['adjC6C0']=mrgd_yld_data['BAA']-0.5
 
-# splice the adjusted C6C0 series with original C6C0 to create a long run of history
+# splice the adjusted C6C0 series (ie the BAA series less 50bps) with original C6C0 to create a long run of history
 mrgd_yld_data['spl_BAA_C6C0']=mrgd_yld_data['C6C0'].combine_first(mrgd_yld_data['adjC6C0'])
 mrgd_yld_data.drop(columns=['adjC6C0','C6C0'], inplace=True)
 
@@ -188,14 +189,8 @@ nonBBGcred_df=pd.concat(
 # NB the nonBBG cred label dict uses the spliced_BAA_C6C0 only, the shorter ICE data is discarded 
 nonBBGcred_label_dict = {
     'tri':{'AAACorp': 'USDcorpAAA20y+'},
-    'yld':{'AAA': 'USDcorpAAA20y+', 'BAA':'USDcorpABB20y+', 'spl_BAA_C6C0':'USDcorpA-BBB5-10y'}
+   'yld':{'AAA': 'USDcorpAAA20y+', 'BAA':'USDcorpBAA20y+', 'spl_BAA_C6C0':'USDcorpA-BBB5-10y'}
 }
-
-# change the BBGcred_df columns from BBG index names to CCR generic index names
-#idx = [
-#    (item[0], credit_label_dict[item[0]][str(item[1]).replace(' Index','')]) 
-#    for item in BBGcred_df.columns
-#    ]
 
 #return a list of tuples representing first level, second level (ie datatype, gen_index) using CCR names
 idx = [(item[0], nonBBGcred_label_dict[item[0]][item[1]]) for item in nonBBGcred_df.columns]
@@ -205,6 +200,7 @@ nonBBGcred_df.columns = pd.MultiIndex.from_tuples(idx, names=['datatype', 'gen_i
 
 # concatenate the
 cred_df = pd.concat([nonBBGcred_df, BBGcred_df], axis=1)
+cred_df = cred_df[['tri', 'spread','yld']]
 
 # pickle the dataframe
 cred_df.to_pickle('C:/Data/pickles/cred_pickles.pkl')

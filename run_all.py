@@ -31,6 +31,12 @@ import tips_dg
 tips_time = round(time.time() - starttips, 1)
 print(f'TIPS data uptodate; {tips_time}s run time')
 
+startgfd = time.time()
+import gfddata
+gfd_time = round(time.time() - starttips, 1)
+print(f'GFD data uptodate; {gfd_time}s run time')
+
+
 total_run_time = round(time.time() - start, 1)
 print(f'Total runtime: {total_run_time}s')
 

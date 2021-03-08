@@ -200,6 +200,7 @@ nonBBGcred_df.columns = pd.MultiIndex.from_tuples(idx, names=['datatype', 'gen_i
 
 # concatenate the
 cred_df = pd.concat([nonBBGcred_df, BBGcred_df], axis=1)
+# reorder the columns
 cred_df = cred_df[['tri', 'spread','yld']]
 
 # pickle the dataframe

@@ -7,6 +7,7 @@
 
 import numpy as np
 import pandas as pd
+import statistics
 import matplotlib.pyplot as plt
 import xlrd
 
@@ -15,14 +16,17 @@ from functions import dgfuncs as funcs
 datapath1 = r'C:/data/BBG_data/'
 datapath2 = r'C:/data/nonBBG_data/'
 
-bond_dts = ['tri', 'yld']
+bond_dts = ['tri', 'yld', 'yld_bid', 'yld_ask']
 
 bond_label_dict={
     'tri':{'G1O2 Index':'USbonds1-3y',	'G2O2 Index':'USbonds3-5y', 'LUATTRUU Index':'USbonds7-10y',
     'G8O2 Index':'USbonds15y+', 'LGAGTRUH Index':'WDbondagg', 'EG01 Index':'EURbonds1-3y',
     'EG02 Index':'EURbonds3-5y','EG04 Index':'EURbonds7-10y','EG08 Index':'EURbonds15y+'},
-    'yld':{'USGG2YR Index':'USbondy2', 'GT5 Govt':'USbondy5',	'USGG10YR Index':'USbondy10',
-    'USGG30YR Index':'USbondy30','LGAGTRUH Index':'WDbondagg'}
+    'yld':{'LGAGTRUH Index':'WDbondagg'},
+    'yld_bid':{'USGG2YR Index':'USbond2y', 'GT5 Govt':'USbond5y','USGG10YR Index':'USbond10y',
+    'USGG30YR Index':'USbond30y'}, 
+    'yld_ask':{'USGG2YR Index':'USbond2y', 'GT5 Govt':'USbond5y','USGG10YR Index':'USbond10y',
+    'USGG30YR Index':'USbond30y'}
     }
 
 #load BBG credit data into a dictionary of dfs
@@ -35,13 +39,24 @@ BBG_bonddata = pd.read_excel(
 
 # concatenate the dictionary into a single df
 BBGbond_df = pd.concat(
-    [BBG_bonddata['tri'],BBG_bonddata['yld']],
-    keys=['tri','yld'],
+    [BBG_bonddata['tri'],BBG_bonddata['yld'], BBG_bonddata['yld_bid'], BBG_bonddata['yld_ask']],
+    keys=['tri','yld', 'yld_bid', 'yld_ask'],
     names=['datatype','gen_index'], axis=1)
 
 # change the BBGbond_df columns from BBGto CCR generic index names
 idx = [(item[0], bond_label_dict[item[0]][item[1]]) for item in BBGbond_df.columns]
 BBGbond_df.columns = pd.MultiIndex.from_tuples(idx, names=['datatype', 'gen_index'])
+
+# calculate midpoint_ylddf, containing the mid point bond yields of yld_bid and yld_ask
+mid = lambda x, y: (x + y) / 2
+midpoint_ylddf = BBGbond_df['yld_bid'].combine(BBGbond_df['yld_ask'], mid)
+
+#add the midpoint_ylddf into the main BBGbond_df
+for col in midpoint_ylddf.columns:
+    BBGbond_df['yld', col] = midpoint_ylddf[col]
+
+BBGbond_df.sort_index(axis=1, inplace=True)
+
 
 ###########################################################
 ### THIS COMPLETES THE CODE FOR THE LOADING OF BBG DATA ###
@@ -89,5 +104,8 @@ bond_df=pd.concat(
     [datatype_dict['tri'],datatype_dict['yld']],
     axis=1, keys=datatype_list, names=['datatype', 'gen_index']
     )
+
+conc = pd.concat([BBGbond_df['yld_bid'], BBGbond_df['yld_ask']], axis =1, keys=['yld_bid', 'yld_ask'])
+bond_df = pd.concat([bond_df, conc], axis=1)
 
 bond_df.to_pickle('C:/Data/pickles/bond_pickles.pkl')

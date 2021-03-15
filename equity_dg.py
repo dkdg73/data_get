@@ -51,7 +51,7 @@ BBGeq_df = pd.concat(
     axis = 1,
     keys=['tri','pi','eps','dps'],
     names=['datatype', 'gen_index']
-    )
+    ).resample('B').last().ffill(limit=30)
 
 #convert monthly eps & dps data to daily
 BBGeq_df['eps']=BBGeq_df['eps'].fillna(method='ffill', limit = 30)
@@ -103,11 +103,11 @@ nonBBGeq_df = nonBBGeq_df.resample('B').last().fillna(method='ffill', limit=35)
 
 # non_BBG data is lapsed and doesn't update 
 # roll forward the date index to bring it uptodate, and ensure merge compatibility 
-last_nonBBG_data_point = nonBBGeq_df.index[-1].date().isoformat()
+first_nonBBG_data_point = nonBBGeq_df.index[0].date().isoformat()
 last_BBG_data_point = BBGeq_df.index[-1].date().isoformat()
 
-dates = pd.date_range(start=last_nonBBG_data_point, end = last_BBG_data_point, freq='B')
-nonBBGeq_df=nonBBGeq_df.append(pd.DataFrame(index=dates))
+new_indx = pd.date_range(start=first_nonBBG_data_point, end = last_BBG_data_point, freq='B')
+nonBBGeq_df= nonBBGeq_df.reindex(new_indx)
 
 
 # combine nonBBG df with cleanBBGeq_df by creating a dictionary of spliced series to concatenate

@@ -1,4 +1,5 @@
-import time 
+import pandas as pd
+import time
 
 start = time.time()
 
@@ -36,6 +37,16 @@ import gfddata
 gfd_time = round(time.time() - starttips, 1)
 print(f'GFD data uptodate; {gfd_time}s run time')
 
+startalltdata  = time.time()
+data_df = pd.concat(
+    [equity_dg.eq_df, gov_dg.bond_df, credit_dg.cred_df, tips_dg.BBGtips_df, inflation_dg.inf_df, money_dg.BBGmoney_df], 
+    keys=['eq', 'gov', 'cred', 'tips', 'inf', 'money'], 
+    axis=1
+    )
+data_df.to_pickle('C:/Data/pickles/alldata_pickles.pkl')
+
+alldata_time = round(time.time() - startalltdata, 1)
+print(f'All data uptodate; {alldata_time}s run time')
 
 total_run_time = round(time.time() - start, 1)
 print(f'Total runtime: {total_run_time}s')

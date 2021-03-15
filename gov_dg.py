@@ -85,12 +85,11 @@ nonBBGbond_df = nonBBGbond_df.resample('B').last().fillna(method='ffill', limit=
 
 # non_BBG data is lapsed and doesn't update 
 # roll forward the date index to bring it uptodate, and ensure merge compatibility
-last_nonBBG_datapoint = nonBBGbond_df.index[-1].date().isoformat()
+first_nonBBG_datapoint = nonBBGbond_df.index[0].date().isoformat()
 last_BBG_datapoint = BBGbond_df.index[-1].date().isoformat()
 
-dates = pd.date_range(start=last_nonBBG_datapoint, end=last_BBG_datapoint,freq='B')
-nonBBGbond_df=nonBBGbond_df.append(pd.DataFrame(index=dates))
-
+new_indx = pd.date_range(start=first_nonBBG_datapoint, end=last_BBG_datapoint,freq='B')
+nonBBGbond_df=nonBBGbond_df.reindex(new_indx)
 
 # combine nonBBG df with BBG df by creating a dictionary of spliced series to concatenate
 datatype_list=['tri','yld']

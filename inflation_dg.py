@@ -39,14 +39,12 @@ for key, value in inf_dict.items():
     inf_dict[key] = ff.get_fred(value, key)
 
 cpi_df = pd.concat(inf_dict, axis=1, names=['price_level', 'duplicate']).droplevel('duplicate', axis=1).astype(float)
-
 minf_df = cpi_df.pct_change(fill_method=None)
-
 ainf_df = cpi_df.pct_change(periods=12, fill_method=None)
 
-df = pd.concat([cpi_df, minf_df, ainf_df], axis=1, keys=['levels', 'mom', 'yoy'])
-df = df.resample('B').last().ffill(limit=23)
+inf_df = pd.concat([cpi_df, minf_df, ainf_df], axis=1, keys=['levels', 'mom', 'yoy'])
+inf_df = inf_df.resample('B').last().ffill(limit=23)
 
-df.to_pickle('C:/Data/pickles/inflation_pickles.pkl')
+inf_df.to_pickle('C:/Data/pickles/inflation_pickles.pkl')
 
 

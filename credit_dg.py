@@ -204,4 +204,4 @@ cred_df = pd.concat([nonBBGcred_df, BBGcred_df], axis=1)
 cred_df = cred_df[['tri', 'spread','yld']]
 
 # pickle the dataframe
-cred_df.to_pickle('C:/Data/pickles/cred_pickles.pkl')
+#cred_df.to_pickle('C:/Data/pickles/cred_pickles.pkl')

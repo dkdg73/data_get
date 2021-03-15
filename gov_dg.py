@@ -107,4 +107,4 @@ bond_df=pd.concat(
 conc = pd.concat([BBGbond_df['yld_bid'], BBGbond_df['yld_ask']], axis =1, keys=['yld_bid', 'yld_ask'])
 bond_df = pd.concat([bond_df, conc], axis=1)
 
-bond_df.to_pickle('C:/Data/pickles/bond_pickles.pkl')
+#bond_df.to_pickle('C:/Data/pickles/bond_pickles.pkl')

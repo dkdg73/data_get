@@ -47,4 +47,4 @@ BBGtips_df = pd.concat(
 idx = [(item[0], tips_label_dict[item[0]][item[1]]) for item in BBGtips_df.columns]
 BBGtips_df.columns = pd.MultiIndex.from_tuples(idx, names=names)
 
-BBGtips_df.to_pickle('C:/Data/pickles/tips_pickles.pkl')
+#BBGtips_df.to_pickle('C:/Data/pickles/tips_pickles.pkl')

@@ -46,7 +46,7 @@ BBGmoney_df = pd.concat(
 idx = [(item[0], money_label_dict[item[0]][item[1]]) for item in BBGmoney_df.columns]
 BBGmoney_df.columns = pd.MultiIndex.from_tuples(idx, names=names)
 
-BBGmoney_df.to_pickle('C:/Data/pickles/money_pickles.pkl')
+#BBGmoney_df.to_pickle('C:/Data/pickles/money_pickles.pkl')
 
 # NB currency return for a usd investor is [(1/usd)/pct_chg() + r*]
 

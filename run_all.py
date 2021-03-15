@@ -46,7 +46,7 @@ data_df = pd.concat(
 data_df.to_pickle('C:/Data/pickles/alldata_pickles.pkl')
 
 alldata_time = round(time.time() - startalltdata, 1)
-print(f'All data uptodate; {alldata_time}s run time')
+print(f'Pickle uptodate; {alldata_time}s run time')
 
 total_run_time = round(time.time() - start, 1)
 print(f'Total runtime: {total_run_time}s')

@@ -45,6 +45,6 @@ ainf_df = cpi_df.pct_change(periods=12, fill_method=None)
 inf_df = pd.concat([cpi_df, minf_df, ainf_df], axis=1, keys=['levels', 'mom', 'yoy'])
 inf_df = inf_df.resample('B').last().ffill(limit=23)
 
-inf_df.to_pickle('C:/Data/pickles/inflation_pickles.pkl')
+#inf_df.to_pickle('C:/Data/pickles/inflation_pickles.pkl')
 
 

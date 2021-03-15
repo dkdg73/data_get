@@ -128,4 +128,4 @@ eq_df=pd.concat(
 #################################################################################
 
 # pickle the dataframe
-eq_df.to_pickle('C:/Data/pickles/eq_pickles.pkl')
+#eq_df.to_pickle('C:/Data/pickles/eq_pickles.pkl')

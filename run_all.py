@@ -43,7 +43,7 @@ data_df = pd.concat(
     keys=['eq', 'gov', 'cred', 'tips', 'inf', 'money'], 
     axis=1
     )
-data_df.to_pickle('C:/Data/pickles/alldata_pickles.pkl')
+data_df.to_pickle('C:/Data/alldata/alldata_pickles.pkl')
 
 alldata_time = round(time.time() - startalltdata, 1)
 print(f'Pickle uptodate; {alldata_time}s run time')

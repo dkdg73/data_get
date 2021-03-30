@@ -20,7 +20,7 @@ names=['datatype','gen_index']
 tips_label_dict={
     'tri':{'GUQI Index':'UStips0-5y', 'G4QI Index':'UStips7-10y',	'G8QI Index':'UStips15y+',
     'W0GI Index':'WDtips'},
-    'break_even':{'USGGBE10 Index':'USbe10','USGGBE30 Index':'USbe30'},
+    'break_even':{'USGGBE01 Index':'USbe01', 'USGGBE02 Index':'USbe02', 'USGGBE05 Index':'USbe05', 'USGGBE10 Index':'USbe10','USGGBE30 Index':'USbe30'},
     'real_yld':{'GTII5 Govt':'USrealyld5','GTII10 Govt':'USrealyld10','GTII30 Govt':'USrealyld30'},
     }
 

@@ -24,7 +24,7 @@ equity_data_dict = {
 eq_label_dict = {
     'tri': {'SPXT': 'spx', 'XCMP':'ndxcomp', 'XNBI':'biotech', 
         'M1WD':'acwi', 'M1EF':'em','RU30INTR':'rus3000',
-        'RU20INTR':'rus2000'},
+        'RU20INTR':'rus2000', 'ARB':'ACC_spacarb'},
     'pi': {'SPX': 'spx', 'NDX':'ndx100', 'CCMP':'ndxcomp','MXWD':'acwi','MXEF':'em','RTY':'rus2000','RAY':'rus3000'},
     'eps': {'SPX': 'spx','NDX':'ndx100', 'CCMP':'ndxcomp','MXWD':'acwi','MXEF':'em','RTY':'rus2000','RAY':'rus3000'},
     'dps': {'SPX': 'spx','NDX':'ndx100', 'CCMP':'ndxcomp','MXWD':'acwi','MXEF':'em','RTY':'rus2000','RAY':'rus3000'}

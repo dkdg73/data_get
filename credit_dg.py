@@ -25,7 +25,8 @@ credit_label_dict={
     'J1A3':'USDcorpCCC1-3y', 'J2A1':'USDcorpBB3-5y', 'J2A2':'USDcorpB3-5y', 'J2A3':'USDcorpCCC3-5y',
     'J6A1':'USDcorpBB5-10y', 'EMGB':'USDemsovHY', 'IQDL':'USDlatamsovHY','IQDA':'USDasiasovHY'
     },
-    'spread':{'LGCPTRUH':'USDglobalaggcorp', 'BAC1TRUU':'USDglobalaggcorp1-3y', 'LG30TRUU':'USDglobalHY'},
+    'spread':{'LGCPTRUH':'USDglobalaggcorp', 'BAC1TRUU':'USDglobalaggcorp1-3y', 'LG30TRUU':'USDglobalHY', 
+    'BICLB10Y':'USDcorpBAA'},
     'yld':{'LGCPTRUH':'USDglobalaggcorp', 'BAC1TRUU':'USDglobalaggcorp1-3y', 'LG30TRUU':'USDglobalHY'}
     }
 

@@ -24,7 +24,7 @@ equity_data_dict = {
 eq_label_dict = {
     'tri': {'SPXT': 'spx', 'XCMP':'ndxcomp', 'XNBI':'biotech', 
         'M1WD':'acwi', 'M1EF':'em','RU30INTR':'rus3000',
-        'RU20INTR':'rus2000', 'ARB':'ACC_spacarb'},
+        'RU20INTR':'rus2000', 'ARB':'spacarb'},
     'pi': {'SPX': 'spx', 'NDX':'ndx100', 'CCMP':'ndxcomp','MXWD':'acwi','MXEF':'em','RTY':'rus2000','RAY':'rus3000'},
     'eps': {'SPX': 'spx','NDX':'ndx100', 'CCMP':'ndxcomp','MXWD':'acwi','MXEF':'em','RTY':'rus2000','RAY':'rus3000'},
     'dps': {'SPX': 'spx','NDX':'ndx100', 'CCMP':'ndxcomp','MXWD':'acwi','MXEF':'em','RTY':'rus2000','RAY':'rus3000'}
@@ -37,8 +37,9 @@ for key in equity_data_dict.keys():
     equity_data_dict[key] = pd.read_excel(
     f'{datapath1}equity.xlsx', sheet_name=equity_data_dict[key], index_col = 0, parse_dates=True)
 
-    #clean BBGeq_df columns by removing ' Index' from string 
+    #clean BBGeq_df columns by removing BBG asset class identifiers such as ' Index' from string  
     equity_data_dict[key].columns = [col.replace(' Index','') for col in equity_data_dict[key].columns]
+    equity_data_dict[key].columns = [col.replace(' CN Equity','') for col in equity_data_dict[key].columns]
 
     #replace BBGeq_df columns of BBG index names with generic index labels
     equity_data_dict[key].columns = [eq_label_dict[key][second_key] for second_key in equity_data_dict[key].columns]

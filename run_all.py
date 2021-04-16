@@ -53,7 +53,7 @@ maindata_df.to_pickle('C:/Data/alldata/maindata_pickles.pkl')
 
 spacs_closed.spacs_closed_df.to_pickle('C:/Data/alldata/spacs_closed.pkl')
 spacs_closed.close_date.to_pickle('C:/Data/alldata/spacs_closed_close_dates.pkl')
-spacs_closed.announce_date.to_pickle('C:/Data/alldata/spacs_closed_annouce_dates.pkl')
+spacs_closed.announce_date.to_pickle('C:/Data/alldata/spacs_closed_announce_dates.pkl')
 
 alldata_time = round(time.time() - startalltdata, 1)
 print(f'Pickle uptodate; {alldata_time}s run time')
